@@ -127,7 +127,7 @@ int main()
 
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
@@ -211,9 +211,16 @@ int setupGeometry()
 	// Pode ser arazenado em um VBO único ou em VBOs separados
 	GLfloat vertices[] = {
 		//x   y     z
-		-0.5, -0.5, 0.0, //v0
-		 0.5, -0.5, 0.0, //v1
- 		 0.0,  0.5, 0.0, //v2 
+		//-0.5, -0.5, 0.0, //v0
+		// 0.5, -0.5, 0.0, //v1
+ 		//	 0.0,  0.5, 0.0, //v2
+		-0.5, 0.5, 0.0, //v0
+		 0.0, 0.0, 0.0, //v1
+		 0.5, 0.5, 0.0, //v2
+		 0.0, 0.0, 0.0, //v3
+		-0.5,-0.5, 0.0, //v4
+		 0.5,-0.5, 0.0 //v5
+
 	};
 
 	GLuint VBO, VAO;
