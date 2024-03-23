@@ -15,8 +15,9 @@
                 "${workspaceFolder}/glad.c",  //GLAD
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                // Aqui você inclui o caminho para os diretórios que possuem as bibliotecas estáticas
                 "-L${workspaceFolder}/../Dependencies/glfw-3.4.bin.WIN64/lib-mingw-w64",
-                // Aqio você inclui o nome das biblioteca estáticas (.lib ou .a), com -l na frente
+                // Aqui você inclui o nome das biblioteca estáticas (.lib ou .a), com -l na frente
                 "-lglfw3dll"
             ],
             "options": {
