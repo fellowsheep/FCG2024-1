@@ -12,16 +12,19 @@
 
 3 - Escolher qual compilador C++ baixar: MSVC (Microsoft, o mesmo do Visual Studio) ou MinGW (open source): https://code.visualstudio.com/docs/languages/cpp
 
-    Se estiver usando o Windows e escolher o MinGW:
-
-    - Baixar e instalar o MSys2: https://github.com/msys2/msys2-installer/releases/download/2024-01-13/msys2-x86_64-20240113.exe 
-    - No terminal do MSys2, digitar: 
+ - Se estiver usando o Windows e escolher o MinGW:
+   - Baixar e instalar o MSys2: https://github.com/msys2/msys2-installer/releases/download/2024-01-13/msys2-x86_64-20240113.exe 
+   - No terminal do MSys2, digitar:
+     
     `pacman -S --needed base-devel mingw-w64-ucrt-x86_64-toolchain`
 
-4 - Se estiver em um computador que não tenha acesso de adm, adicionar temporariamente ao path com este comando (via terminal):
-     ```set PATH=%PATH%;C:\msys64\ucrt64\bin``` 
+
+4 - Se estiver em um computador que não tenha acesso de adm, adicionar temporariamente ao path com este comando (via terminal): 
+
+   `set PATH=%PATH%;C:\msys64\ucrt64\bin` 
+     
 5 - Realizados estes passos, entre no Visual Studio Code, entre em uma pasta (ou crie uma), e crie o seguinte arquivo de código em C++:
-```
+```cpp
 #include <cstdio>
 #include <iostream>
 
