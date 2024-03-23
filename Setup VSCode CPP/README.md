@@ -36,3 +36,15 @@ int main()
     return 0;
 }
 ```
+
+6 - Depois disso, vá em Debug C/C++ File
+
+![image](https://github.com/fellowsheep/FCG2024-1/assets/2465857/90da6ff2-653f-47e2-8800-15de70e8ef99)
+
+No terminal que aparecer, deverá aparecer a mensagem `Teste`.
+
+![image](https://github.com/fellowsheep/FCG2024-1/assets/2465857/0dcbc3cc-4545-4b5a-8416-c9b9bcec442e)
+
+
+
+
