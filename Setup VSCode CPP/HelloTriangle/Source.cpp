@@ -124,10 +124,19 @@ int main()
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
 
 		glUniform4f(colorLoc, 0.0f, 0.0f, 1.0f, 1.0f); //enviando cor para vari�vel uniform inputColor
-
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Contorno do polígono - GL_LINE_LOOP
+		glUniform4f(colorLoc, 1.0f, 1.0f, 0.0f, 1.0f);
+		glDrawArrays(GL_LINE_LOOP, 0, 3);
+		glDrawArrays(GL_LINE_LOOP, 3, 3);
+
+		// Desenho dos pontos - GL_POINTS
+		glUniform4f(colorLoc, 1.0f, 0.0f, 1.0f, 1.0f);
+		glDrawArrays(GL_POINTS, 0, 6);
+
 
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
