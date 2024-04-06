@@ -23,9 +23,10 @@ using namespace std;
 // Prot�tipo da fun��o de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-// Prot�tipos das fun��es
-int setupShader();
-int setupGeometry();
+// Protótipos das funções
+int setupShader(const GLchar* vertexShaderSource, const GLchar* fragmentShaderSource);
+int exercicio5();
+int exercicio8();
 
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -46,6 +47,27 @@ const GLchar* fragmentShaderSource = "#version 400\n"
 "void main()\n"
 "{\n"
 "color = inputColor;\n"
+"}\n\0";
+
+// C�digo fonte do Vertex Shader (em GLSL): ainda hardcoded
+const GLchar* vertexShaderSource2 = "#version 400\n"
+"layout (location = 0) in vec3 position;\n"
+"layout (location = 1) in vec3 color;\n"
+"out vec3 vertexColor;\n"
+"void main()\n"
+"{\n"
+//...pode ter mais linhas de código aqui!
+"gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
+"vertexColor = color;\n"
+"}\0";
+
+//C�difo fonte do Fragment Shader (em GLSL): ainda hardcoded
+const GLchar* fragmentShaderSource2 = "#version 400\n"
+"in vec3 vertexColor;\n"
+"out vec4 color;\n"
+"void main()\n"
+"{\n"
+"color = vec4(vertexColor,1.0);\n"
 "}\n\0";
 
 // Fun��o MAIN
@@ -94,12 +116,19 @@ int main()
 
 
 	// Compilando e buildando o programa de shader
-	GLuint shaderID = setupShader();
+
+	//Exercicio 5
+	//GLuint shaderID = setupShader(vertexShaderSource,fragmentShaderSource);
+	
+	//Exercicio 8
+	GLuint shaderID = setupShader(vertexShaderSource2,fragmentShaderSource2);
 
 	// Gerando um buffer simples, com a geometria de um tri�ngulo
-	GLuint VAO = setupGeometry();
+	// Exercicio 5
+	//GLuint VAO = exercicio5();
+	// Exercicio 8
+	GLuint VAO = exercicio8();
 	
-
 	// Enviando a cor desejada (vec4) para o fragment shader
 	// Utilizamos a vari�veis do tipo uniform em GLSL para armazenar esse tipo de info
 	// que n�o est� nos buffers
@@ -164,7 +193,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 // O c�digo fonte do vertex e fragment shader est� nos arrays vertexShaderSource e
 // fragmentShader source no ini�io deste arquivo
 // A fun��o retorna o identificador do programa de shader
-int setupShader()
+int setupShader(const GLchar* vertexShaderSource, const GLchar* fragmentShaderSource)
 {
 	// Vertex shader
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -212,7 +241,7 @@ int setupShader()
 // Apenas atributo coordenada nos v�rtices
 // 1 VBO com as coordenadas, VAO com apenas 1 ponteiro para atributo
 // A fun��o retorna o identificador do VAO
-int setupGeometry()
+int exercicio5()
 {
 	// Aqui setamos as coordenadas x, y e z do tri�ngulo e as armazenamos de forma
 	// sequencial, j� visando mandar para o VBO (Vertex Buffer Objects)
@@ -265,3 +294,57 @@ int setupGeometry()
 	return VAO;
 }
 
+int exercicio8()
+{
+	// Aqui setamos as coordenadas x, y e z do tri�ngulo e as armazenamos de forma
+	// sequencial, j� visando mandar para o VBO (Vertex Buffer Objects)
+	// Cada atributo do v�rtice (coordenada, cores, coordenadas de textura, normal, etc)
+	// Pode ser arazenado em um VBO �nico ou em VBOs separados
+	GLfloat vertices[] = {
+		//x   y    z    r    g    b
+		-0.5, 0.5, 0.0, 1.0, 0.0, 0.0, //v0 vermelho
+		 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, //v1 verde
+		 0.5, 0.5, 0.0, 0.0, 0.0, 1.0, //v2 azul
+		 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, //v3 amarelo
+		-0.5,-0.5, 0.0, 0.0, 1.0, 1.0, //v4 ciano
+		 0.5,-0.5, 0.0, 1.0, 0.0, 1.0  //v5 magenta
+	};
+
+	GLuint VBO, VAO;
+	//Gera��o do identificador do VBO
+	glGenBuffers(1, &VBO);
+	//Faz a conex�o (vincula) do buffer como um buffer de array
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//Envia os dados do array de floats para o buffer da OpenGl
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	//Gera��o do identificador do VAO (Vertex Array Object)
+	glGenVertexArrays(1, &VAO);
+	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de v�rtices
+	// e os ponteiros para os atributos 
+	glBindVertexArray(VAO);
+	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando: 
+	// Localiza��o no shader * (a localiza��o dos atributos devem ser correspondentes no layout especificado no vertex shader)
+	// Numero de valores que o atributo tem (por ex, 3 coordenadas xyz) 
+	// Tipo do dado
+	// Se est� normalizado (entre zero e um)
+	// Tamanho em bytes 
+	// Deslocamento a partir do byte zero 
+
+	//Atributo layout 0 - Posição - 3 valores dos 6 que descrevem o vértice
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	//Atributo layout 1 - Cor - 3 valores dos 6 que descrevem o vértice
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3* sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	// Observe que isso � permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de v�rtice 
+	// atualmente vinculado - para que depois possamos desvincular com seguran�a
+	glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+	// Desvincula o VAO (� uma boa pr�tica desvincular qualquer buffer ou array para evitar bugs medonhos)
+	glBindVertexArray(0); 
+
+	return VAO;
+}
