@@ -22,6 +22,12 @@ using namespace std;
 //Classe que gerencia os shaders
 #include "Shader.h"
 
+//GLM
+#include <glm/glm.hpp> 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 
 // Prot�tipo da fun��o de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -85,7 +91,17 @@ int main()
 	// Exercicio 8
 	GLuint VAO = exercicio8();
 	
+	//Habilita o shader que sera usado (glUseProgram)
 	shader.Use();
+
+	//Matriz de projeção (paralela ortográfica)
+	// Exercício 1 da Lista 2
+	glm::mat4 projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+
+	// Exercício 2 da Lista 2
+	//glm::mat4 projection = glm::ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
+	//Enviando para o shader via variável do tipo uniform (glUniform....)
+	shader.setMat4("projection",glm::value_ptr(projection));
 	
 	// Loop da aplica��o - "game loop"
 	while (!glfwWindowShouldClose(window))
@@ -106,11 +122,11 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// Contorno do polígono - GL_LINE_LOOP
-		glDrawArrays(GL_LINE_LOOP, 0, 3);
-		glDrawArrays(GL_LINE_LOOP, 3, 3);
+		//glDrawArrays(GL_LINE_LOOP, 0, 3);
+		//glDrawArrays(GL_LINE_LOOP, 3, 3);
 
 		// Desenho dos pontos - GL_POINTS
-		glDrawArrays(GL_POINTS, 0, 6);
+		//glDrawArrays(GL_POINTS, 0, 6);
 
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
