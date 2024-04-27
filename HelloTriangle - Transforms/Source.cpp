@@ -91,7 +91,7 @@ int main()
 	shader.Use();
 
 	//Criação de um objeto Sprite
-	Sprite sprite, sprite2, sprite3, background, ground;
+	Sprite sprite, sprite2, sprite3, background, ground, sprite4;
 	sprite.inicializar(glm::vec3(400.0,300.0,0.0), glm::vec3(200.0,200.0,1.0),0.0,glm::vec3(1.0,0.0,1.0));
 	sprite.setShader(&shader);
 
@@ -106,6 +106,9 @@ int main()
 
 	ground.inicializar(glm::vec3(400.0,100.0,0.0), glm::vec3(800.0,200.0,1.0),0.0,glm::vec3(0.5,0.5,0.0));
 	ground.setShader(&shader);
+
+	sprite4.inicializar(glm::vec3(200.0,500.0,0.0), glm::vec3(100.0,100.0,1.0),45.0,glm::vec3(1.0,1.0,0.0));
+	sprite4.setShader(&shader);
 
 
 
@@ -128,11 +131,15 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //cor de fundo
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		float angulo = (float)glfwGetTime();
+		sprite4.setAngulo(glm::degrees(angulo));
+
 		background.desenhar();
 		ground.desenhar();
 		sprite.desenhar();
 		sprite2.desenhar();
 		sprite3.desenhar();
+		sprite4.desenhar();
 
 		// Troca os buffers da tela
 		glfwSwapBuffers(window);

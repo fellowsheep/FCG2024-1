@@ -6,7 +6,7 @@ Sprite::~Sprite()
 	glDeleteVertexArrays(1, &VAO);
 }
 
-void Sprite::inicializar(glm::vec3 pos, glm::vec3 escala, float angle, glm::vec3 cor)
+void Sprite::inicializar(glm::vec3 pos, glm::vec3 escala, float angulo, glm::vec3 cor)
 {
     this->pos = pos;
     this->escala = escala;
@@ -14,7 +14,7 @@ void Sprite::inicializar(glm::vec3 pos, glm::vec3 escala, float angle, glm::vec3
 
     //Especificação da geometria da sprite (quadrado, 2 triangulos)
     GLfloat vertices[] = {
-		//x   y    z    r    g    b
+		//x   y    z    r      g      b
 		-0.5, 0.5, 0.0, cor.r, cor.g, cor.b, //v0
         -0.5,-0.5, 0.0, cor.r, cor.g, cor.b, //v1
          0.5, 0.5, 0.0, cor.r, cor.g, cor.b, //v2
@@ -65,6 +65,7 @@ void Sprite::atualizar()
 {
     glm::mat4 model = glm::mat4(1); //matriz identidade
     model = glm::translate(model, pos);
+	model = glm::rotate(model,glm::radians(angulo), glm::vec3(0.0, 0.0, 1.0));
     model = glm::scale(model, escala);
     shader->setMat4("model", glm::value_ptr(model));
 }

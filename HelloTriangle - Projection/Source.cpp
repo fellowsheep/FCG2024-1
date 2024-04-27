@@ -96,7 +96,7 @@ int main()
 
 	//Matriz de projeção (paralela ortográfica)
 	// Exercício 1 da Lista 2
-	glm::mat4 projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+	glm::mat4 projection = glm::ortho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 
 	// Exercício 2 da Lista 2
 	//glm::mat4 projection = glm::ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);

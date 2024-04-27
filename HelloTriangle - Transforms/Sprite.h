@@ -19,7 +19,7 @@ class Sprite
     void finalizar();
 
     inline void setShader(Shader *shader) { this->shader = shader; }
-
+    inline void setAngulo(float angulo) { this->angulo = angulo; }
     protected:
 
     GLuint VAO; //Identificador do buffer de geometria VAO
