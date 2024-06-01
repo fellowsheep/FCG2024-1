@@ -6,22 +6,28 @@ Sprite::~Sprite()
 	glDeleteVertexArrays(1, &VAO);
 }
 
-void Sprite::inicializar(GLuint texID, glm::vec3 pos, glm::vec3 escala, float angulo, glm::vec3 cor)
+void Sprite::inicializar(GLuint texID, int nAnimations, int nFrames, glm::vec3 pos, glm::vec3 escala, float angulo, glm::vec3 cor)
 {
     this->pos = pos;
-    this->escala = escala;
+    this->escala.x = escala.x / (float) nFrames;
+	this->escala.y = escala.y / (float) nAnimations;
     this->angulo = angulo;
 	this->texID = texID;
+	this->nAnimations = nAnimations;
+	this->nFrames = nFrames;
+
+	offsetTex.s = 1.0/ (float) nFrames;
+	offsetTex.t = 1.0/ (float) nAnimations; 
 
     //Especificação da geometria da sprite (quadrado, 2 triangulos)
     GLfloat vertices[] = {
 		//x   y    z    r      g      b      s    t
-		-0.5, 0.5, 0.0, cor.r, cor.g, cor.b, 0.0, 1.0, //v0
+		-0.5, 0.5, 0.0, cor.r, cor.g, cor.b, 0.0, offsetTex.t, //v0
         -0.5,-0.5, 0.0, cor.r, cor.g, cor.b, 0.0, 0.0, //v1
-         0.5, 0.5, 0.0, cor.r, cor.g, cor.b, 1.0, 1.0, //v2
+         0.5, 0.5, 0.0, cor.r, cor.g, cor.b, offsetTex.s, offsetTex.t, //v2
         -0.5,-0.5, 0.0, cor.r, cor.g, cor.b, 0.0, 0.0, //v1
-         0.5,-0.5, 0.0, cor.r, cor.g, cor.b, 1.0, 0.0, //v3
-         0.5, 0.5, 0.0, cor.r, cor.g, cor.b, 1.0, 1.0  //v2
+         0.5,-0.5, 0.0, cor.r, cor.g, cor.b, offsetTex.s, 0.0, //v3
+         0.5, 0.5, 0.0, cor.r, cor.g, cor.b, offsetTex.s, offsetTex.t  //v2
 	};
 
 	GLuint VBO;
@@ -68,6 +74,14 @@ void Sprite::inicializar(GLuint texID, glm::vec3 pos, glm::vec3 escala, float an
 
 void Sprite::atualizar()
 {
+
+	iFrame = (iFrame + 1) % nFrames; //incrementando ciclicamente o indice do Frame
+
+	//Calculando o quanto teremos que deslocar nas coordenadas de textura
+	float offsetTexFrameS = iFrame * offsetTex.s; 
+	float offsetTexFrameT = iAnimation * offsetTex.t; 
+	shader->setVec2("offsetTex",offsetTexFrameS,offsetTexFrameT);
+
     glm::mat4 model = glm::mat4(1); //matriz identidade
     model = glm::translate(model, pos);
 	model = glm::rotate(model,glm::radians(angulo), glm::vec3(0.0, 0.0, 1.0));

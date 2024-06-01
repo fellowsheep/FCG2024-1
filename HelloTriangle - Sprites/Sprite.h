@@ -13,7 +13,7 @@ class Sprite
     Sprite() {} //Método construtor padrão
     ~Sprite(); //Método destrutor
 
-    void inicializar(GLuint texID, glm::vec3 pos=glm::vec3(0), glm::vec3 escala = glm::vec3(1), float angulo = 0.0, glm::vec3 cor = glm::vec3(1.0, 1.0, 0.0));
+    void inicializar(GLuint texID, int nAnimations = 1, int nFrames = 1, glm::vec3 pos=glm::vec3(0), glm::vec3 escala = glm::vec3(1), float angulo = 0.0, glm::vec3 cor = glm::vec3(1.0, 1.0, 0.0));
     void atualizar();
     void desenhar();
     void finalizar();
@@ -28,6 +28,10 @@ class Sprite
     //Transformações na geometria
     glm::vec3 pos, escala;
     float angulo;
+
+    //Animação por sprite
+    int nAnimations, nFrames, iAnimation, iFrame;
+    glm::vec2 offsetTex; //ds e dt 
 
     Shader *shader;
 };

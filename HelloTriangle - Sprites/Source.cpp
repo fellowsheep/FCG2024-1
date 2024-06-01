@@ -36,7 +36,7 @@ using namespace std;
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // Protótipos das funções
-GLuint loadTexture(string filePath);
+GLuint loadTexture(string filePath, int &imgWidth, int &imgHeight);
 
 
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
@@ -86,32 +86,43 @@ int main()
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 
+	//Habilitando a transparência
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//Habilitando o teste de profundidade
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_ALWAYS);
+
 
 
 	// Compilando e buildando o programa de shader
 
 	Shader shader("HelloTriangle.vs","HelloTriangle.fs");
-
-	GLuint texID = loadTexture("../Textures/characters/PNG/Knight/knight.png");
-	GLuint texID2 = loadTexture("../Textures/backgrounds/PNG/Postapocalypce1/Bright/postapocalypse1.png");
-	
 	//Habilita o shader que sera usado (glUseProgram)
 	shader.Use();
 
+	int imgWidth, imgHeight;
+	GLuint texID = loadTexture("../Textures/characters/PNG/Knight/walk.png", imgWidth, imgHeight);
+	
 	//Criação de um objeto Sprite
 	Sprite sprite, sprite2, sprite3, background, ground, sprite4;
-	sprite.inicializar(texID, glm::vec3(400.0,300.0,0.0), glm::vec3(400.0,400.0,1.0),0.0,glm::vec3(1.0,0.0,1.0));
+	sprite.inicializar(texID, 1, 6, glm::vec3(400.0,300.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
 	sprite.setShader(&shader);
+
+	texID = loadTexture("../Textures/items/Pirate-Stuff/Icon31.png", imgWidth, imgHeight);
+	//Criação de um objeto Sprite
+	sprite2.inicializar(texID, 1, 1, glm::vec3(450.0,300.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
+	sprite2.setShader(&shader);
 
 	//sprite2.inicializar(glm::vec3(200.0,300.0,0.0), glm::vec3(100.0,50.0,1.0));
 	//sprite2.setShader(&shader);
 
 	//sprite3.inicializar(glm::vec3(600.0,300.0,0.0), glm::vec3(50.0,100.0,1.0), 0.0,glm::vec3(0.0,0.5,0.0));
 	//sprite3.setShader(&shader);
+	GLuint texID2 = loadTexture("../Textures/backgrounds/fantasy-set/PNG/Battleground1/Bright/Battleground1.png", imgWidth, imgHeight);
 
-	background.inicializar(texID2, glm::vec3(400.0,300.0,0.0), glm::vec3(800.0,600.0,1.0),0.0,glm::vec3(0.0,1.0,1.0));
+	background.inicializar(texID2, 1, 1, glm::vec3(400.0,300.0,0.0), glm::vec3(imgWidth/2,imgHeight/2,1.0),0.0,glm::vec3(0.0,1.0,1.0));
 	background.setShader(&shader);
 
 	//ground.inicializar(glm::vec3(400.0,100.0,0.0), glm::vec3(800.0,200.0,1.0),0.0,glm::vec3(0.5,0.5,0.0));
@@ -141,7 +152,7 @@ int main()
 
 		// Limpa o buffer de cor
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //cor de fundo
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		float angulo = (float)glfwGetTime();
 		sprite4.setAngulo(glm::degrees(angulo));
@@ -149,7 +160,7 @@ int main()
 		background.desenhar();
 		//ground.desenhar();
 		sprite.desenhar();
-		//sprite2.desenhar();
+		sprite2.desenhar();
 		//sprite3.desenhar();
 		//sprite4.desenhar();
 
@@ -171,7 +182,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
-GLuint loadTexture(string filePath)
+GLuint loadTexture(string filePath, int &imgWidth, int &imgHeight)
 {
 	GLuint texID;
 
@@ -199,6 +210,9 @@ GLuint loadTexture(string filePath)
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     	}
     	glGenerateMipmap(GL_TEXTURE_2D);
+
+		imgWidth = width;
+		imgHeight = height;
 
 		stbi_image_free(data);
 
