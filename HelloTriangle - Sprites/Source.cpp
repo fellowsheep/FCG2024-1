@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <assert.h>
+#include <windows.h>  
 
 using namespace std;
 
@@ -32,15 +33,23 @@ using namespace std;
 
 #include "Sprite.h"
 
+#include "Timer.h"
+
+enum directions {NONE = -1, LEFT, RIGHT, UP, DOWN};
+
 // Prot�tipo da fun��o de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // Protótipos das funções
 GLuint loadTexture(string filePath, int &imgWidth, int &imgHeight);
-
+bool CheckCollision(Sprite &one, Sprite &two);
 
 // Dimens�es da janela (pode ser alterado em tempo de execu��o)
 const GLuint WIDTH = 800, HEIGHT = 600;
+
+//Variáveis globais
+
+int dir = NONE;
 
 // Fun��o MAIN
 int main()
@@ -99,21 +108,22 @@ int main()
 	// Compilando e buildando o programa de shader
 
 	Shader shader("HelloTriangle.vs","HelloTriangle.fs");
-	//Habilita o shader que sera usado (glUseProgram)
-	shader.Use();
-
+	Shader shaderDebug("HelloTriangle.vs","HelloTriangleDebug.fs");
+	
 	int imgWidth, imgHeight;
 	GLuint texID = loadTexture("../Textures/characters/PNG/Knight/walk.png", imgWidth, imgHeight);
 	
 	//Criação de um objeto Sprite
-	Sprite sprite, sprite2, sprite3, background, ground, sprite4;
-	sprite.inicializar(texID, 1, 6, glm::vec3(400.0,300.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
-	sprite.setShader(&shader);
+	Sprite player, coin, sprite3, background, ground, sprite4;
+	player.inicializar(texID, 1, 6, glm::vec3(400.0,150.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
+	player.setShader(&shader);
+	player.setShaderDebug(&shaderDebug);
 
 	texID = loadTexture("../Textures/items/Pirate-Stuff/Icon31.png", imgWidth, imgHeight);
 	//Criação de um objeto Sprite
-	sprite2.inicializar(texID, 1, 1, glm::vec3(450.0,300.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
-	sprite2.setShader(&shader);
+	coin.inicializar(texID, 1, 1, glm::vec3(450.0,700.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
+	coin.setShader(&shader);
+	coin.setShaderDebug(&shaderDebug);
 
 	//sprite2.inicializar(glm::vec3(200.0,300.0,0.0), glm::vec3(100.0,50.0,1.0));
 	//sprite2.setShader(&shader);
@@ -124,6 +134,7 @@ int main()
 
 	background.inicializar(texID2, 1, 1, glm::vec3(400.0,300.0,0.0), glm::vec3(imgWidth/2,imgHeight/2,1.0),0.0,glm::vec3(0.0,1.0,1.0));
 	background.setShader(&shader);
+	background.setShaderDebug(&shaderDebug);
 
 	//ground.inicializar(glm::vec3(400.0,100.0,0.0), glm::vec3(800.0,200.0,1.0),0.0,glm::vec3(0.5,0.5,0.0));
 	//ground.setShader(&shader);
@@ -136,6 +147,11 @@ int main()
 	// Exercício 1 da Lista 2
 	//glm::mat4 projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
 
+
+	//Habilita o shader que sera usado (glUseProgram)
+	shader.Use();
+
+
 	// Exercício 2 da Lista 2
 	glm::mat4 projection = glm::ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
 	//Enviando para o shader via variável do tipo uniform (glUniform....)
@@ -143,26 +159,56 @@ int main()
 
 	glActiveTexture(GL_TEXTURE0);
 	shader.setInt("texBuffer", 0);
+
+	shaderDebug.Use();
+	shaderDebug.setMat4("projection",glm::value_ptr(projection));
+
+	//Timer timer;
+	
 	
 	// Loop da aplica��o - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
+		//timer.start();
 		// Checa se houveram eventos de input (key pressed, mouse moved etc.) e chama as fun��es de callback correspondentes
 		glfwPollEvents();
+
+		//Verifica flags para movimentação do personagem
+		if (dir == LEFT)
+		{
+			player.moveLeft();
+		}
+		else if (dir == RIGHT)
+		{
+			player.moveRight();
+		}
+
+		player.getAABB();
+		coin.getAABB();
+
+		if (CheckCollision(player,coin) == true)
+		{
+			//cout << "Colidiu!" << endl;
+			//getchar();
+		}
 
 		// Limpa o buffer de cor
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //cor de fundo
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		float angulo = (float)glfwGetTime();
-		sprite4.setAngulo(glm::degrees(angulo));
-
 		background.desenhar();
 		//ground.desenhar();
-		sprite.desenhar();
-		sprite2.desenhar();
+		player.desenhar();
+		coin.moveItem();
+		coin.desenhar();
+		
+
 		//sprite3.desenhar();
 		//sprite4.desenhar();
+
+		//timer.finish();
+
+		//timer.wait(10);
 
 		// Troca os buffers da tela
 		glfwSwapBuffers(window);
@@ -173,13 +219,28 @@ int main()
 	return 0;
 }
 
-// Fun��o de callback de teclado - s� pode ter uma inst�ncia (deve ser est�tica se
+// Funçãoo de callback de teclado - s� pode ter uma inst�ncia (deve ser est�tica se
 // estiver dentro de uma classe) - � chamada sempre que uma tecla for pressionada
 // ou solta via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	if (key == GLFW_KEY_A)
+	{
+		dir = LEFT;
+	}
+	if (key == GLFW_KEY_D)
+	{
+		dir = RIGHT;
+	}
+
+	if (action == GLFW_RELEASE)
+	{
+		dir = NONE;
+	}
+
 }
 
 GLuint loadTexture(string filePath, int &imgWidth, int &imgHeight)
@@ -223,8 +284,19 @@ GLuint loadTexture(string filePath, int &imgWidth, int &imgHeight)
 	{
     	 std::cout << "Failed to load texture" << std::endl;
 	}
-
-
 	return texID;
 }
+
+bool CheckCollision(Sprite &one, Sprite &two)
+{
+    // collision x-axis?
+    bool collisionX = one.getPMax().x >= two.getPMin().x &&
+        two.getPMax().x >= one.getPMin().x;
+    // collision y-axis?
+    bool collisionY = one.getPMax().y >= two.getPMin().y &&
+        two.getPMax().y >= one.getPMin().y;
+    // collision only if on both axes
+    return collisionX && collisionY;
+} 
+
 

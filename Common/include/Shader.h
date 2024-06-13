@@ -1,4 +1,4 @@
-// Nossa classezinha que lê o arquivo de shader e o compila na OpenGL
+// Nossa classezinha que lï¿½ o arquivo de shader e o compila na OpenGL
 // Exemplo retirado de https://learnopengl.com/#!Getting-started/Shaders
 
 #pragma once

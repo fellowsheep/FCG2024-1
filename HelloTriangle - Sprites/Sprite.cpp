@@ -18,7 +18,9 @@ void Sprite::inicializar(GLuint texID, int nAnimations, int nFrames, glm::vec3 p
 
 	offsetTex.s = 1.0/ (float) nFrames;
 	offsetTex.t = 1.0/ (float) nAnimations; 
-
+	cor.r = 1.0;
+	cor.g = 0.0;
+	cor.b = 1.0;
     //Especificação da geometria da sprite (quadrado, 2 triangulos)
     GLfloat vertices[] = {
 		//x   y    z    r      g      b      s    t
@@ -70,12 +72,20 @@ void Sprite::inicializar(GLuint texID, int nAnimations, int nFrames, glm::vec3 p
 	// Desvincula o VAO (� uma boa pr�tica desvincular qualquer buffer ou array para evitar bugs medonhos)
 	glBindVertexArray(0);
 
+	vel = 2.0;
+
+	iAnimation = 0;
+	iFrame = 0;
+
+	getAABB();
+
+	colidiu = false;
 }
 
 void Sprite::atualizar()
 {
-
-	iFrame = (iFrame + 1) % nFrames; //incrementando ciclicamente o indice do Frame
+	shader->Use();
+	//iFrame = (iFrame + 1) % nFrames; //incrementando ciclicamente o indice do Frame
 
 	//Calculando o quanto teremos que deslocar nas coordenadas de textura
 	float offsetTexFrameS = iFrame * offsetTex.s; 
@@ -87,20 +97,68 @@ void Sprite::atualizar()
 	model = glm::rotate(model,glm::radians(angulo), glm::vec3(0.0, 0.0, 1.0));
     model = glm::scale(model, escala);
     shader->setMat4("model", glm::value_ptr(model));
+
+	shaderDebug->Use();
+	shaderDebug->setVec2("offsetTex",offsetTexFrameS,offsetTexFrameT);
+	shaderDebug->setMat4("model", glm::value_ptr(model));
+
 }
 
 void Sprite::desenhar()
 {
     atualizar();
 
-
+	shader->Use();
 	glBindTexture(GL_TEXTURE_2D, texID); //Conectando com a textura
+
 
     glBindVertexArray(VAO); //Conectando ao buffer de geometria
 
 	// Poligono Preenchido - GL_TRIANGLES
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    glBindVertexArray(0); //desconectando o buffer de geometria
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	shaderDebug->Use();
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_LINE_LOOP, 0, 6);
+
+    glBindVertexArray(0); //desconectando o buffer de geometria
+
+}
+
+void Sprite::moveLeft()
+{
+	pos.x = pos.x - vel;
+}
+
+void Sprite::moveRight()
+{
+	pos.x = pos.x + vel;
+}
+
+void Sprite::moveItem()
+{
+	
+	if (colidiu || pos.y < 130) 
+	{
+		//Reinicia a posição
+		pos.y = 700;
+		pos.x = 10 + rand() % 780;
+		colidiu = false;
+	}
+	else
+	{
+		pos.y -= vel;
+	}
+}
+
+void Sprite::getAABB()
+{
+	pmin.x = pos.x - escala.x/2.0;
+	pmin.y = pos.y - escala.y/2.0;
+	
+	pmax.x = pos.x + escala.x/2.0;
+	pmax.y = pos.y + escala.y/2.0;
+
 }
