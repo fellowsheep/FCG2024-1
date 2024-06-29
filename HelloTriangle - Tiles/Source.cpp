@@ -164,7 +164,7 @@ int main()
 	//glm::mat4 projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
 
 	//Leitura do tilemap
-	loadMap("map1.txt");
+	loadMap("map2.txt");
 
 
 
@@ -183,9 +183,6 @@ int main()
 	shaderDebug.Use();
 	shaderDebug.setMat4("projection",glm::value_ptr(projection));
 
-	//Timer timer;
-	
-	
 	// Loop da aplica��o - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
