@@ -28,6 +28,8 @@ class Sprite
     inline void setShaderDebug(Shader *shader) { this->shaderDebug = shader; }
     inline void setAngulo(float angulo) { this->angulo = angulo; }
     
+    inline void setPosicao(glm::vec3 novaPos) { this->pos = novaPos; }
+
     inline glm::vec3 getPMin() { return this->pmin;}
     inline glm::vec3 getPMax() { return this->pmax;}
     
