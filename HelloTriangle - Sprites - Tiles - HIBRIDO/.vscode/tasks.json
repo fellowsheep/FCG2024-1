@@ -19,7 +19,6 @@
                 "${workspaceFolder}/../Common/src/Shader.cpp", //Common
                 "${workspaceFolder}/Sprite.cpp",
                 "${workspaceFolder}/Tile.cpp",
-                "${workspaceFolder}/Timer.cpp",
                 "${workspaceFolder}/../Dependencies/stb_image/stb_image.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",

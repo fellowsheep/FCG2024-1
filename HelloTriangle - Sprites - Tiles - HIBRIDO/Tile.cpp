@@ -3,8 +3,8 @@
 void Tile::inicializar(GLuint texID, int nRows, int nCols, glm::vec3 pos, glm::vec3 escala, float angulo, glm::vec3 cor)
 {
     this->pos = pos;
-    this->escala.x = escala.x / (float) nFrames;
-	this->escala.y = escala.y / (float) nAnimations;
+    this->escala.x = escala.x;
+	this->escala.y = escala.y;
     this->angulo = angulo;
 	this->texID = texID;
 	this->nRows = nRows;
@@ -20,8 +20,8 @@ void Tile::inicializar(GLuint texID, int nRows, int nCols, glm::vec3 pos, glm::v
 	cor.b = 1.0;
     //Especificação da geometria da sprite (quadrado, 2 triangulos)
 
-    float th = 1.0;
-    float tw = 2.0;
+    float th = 1.0f;
+    float tw = 1.0f;
 
     glm::vec3 A, B, C, D;
     A = glm::vec3(-tw/2.0, 0.0,0.0);
@@ -29,16 +29,17 @@ void Tile::inicializar(GLuint texID, int nRows, int nCols, glm::vec3 pos, glm::v
     C = glm::vec3(tw/2.0, 0.0,0.0);
     D = glm::vec3(0.0, -th/2.0,0.0);
 
-
     GLfloat vertices[] = {
 		//x   y    z    r      g      b      s    t
-		A.x, A.y, A.z, cor.r, cor.g, cor.b, 0.0, 0.5,
-        B.x, B.y, B.z, cor.r, cor.g, cor.b, 0.5, 1.0,
-        D.x, D.y, D.z, cor.r, cor.g, cor.b, 0.5, 0.0,
-        B.x, B.y, B.z, cor.r, cor.g, cor.b, 0.5, 1.0,
-        C.x, C.y, C.z, cor.r, cor.g, cor.b, 1.0, 0.5,
-        D.x, D.y, D.z, cor.r, cor.g, cor.b, 0.5, 0.0
+		A.x, A.y, A.z, cor.r, cor.g, cor.b, 0.0f, offsetTex.t/2.0,
+        B.x, B.y, B.z, cor.r, cor.g, cor.b, offsetTex.s/2.0, offsetTex.t,
+        D.x, D.y, D.z, cor.r, cor.g, cor.b, offsetTex.s/2.0, 0.0f,
+        B.x, B.y, B.z, cor.r, cor.g, cor.b, offsetTex.s/2.0, offsetTex.t,
+        C.x, C.y, C.z, cor.r, cor.g, cor.b, offsetTex.s, offsetTex.t/2.0,
+        D.x, D.y, D.z, cor.r, cor.g, cor.b, offsetTex.s/2.0, 0.0f
 	};
+
+	//////////////
 
 	GLuint VBO;
 	//Gera��o do identificador do VBO
@@ -85,8 +86,6 @@ void Tile::inicializar(GLuint texID, int nRows, int nCols, glm::vec3 pos, glm::v
 	iAnimation = 0;
 	iFrame = 0;
 
-	getAABB();
-
 	colidiu = false;
 }
 
@@ -106,25 +105,24 @@ void Tile::atualizar()
     shader->setMat4("model", glm::value_ptr(model));
 
 	shaderDebug->Use();
-	shaderDebug->setVec2("offsetTex",offsetTexFrameS,offsetTexFrameT);
 	shaderDebug->setMat4("model", glm::value_ptr(model));
+
+	cout << pos.x << " " << pos.y << endl;
+
 
 }
 
 void Tile::desenhar()
 {
-    Tile::atualizar();
+    this->atualizar();
 
 	shader->Use();
 	glBindTexture(GL_TEXTURE_2D, texID); //Conectando com a textura
-
-
     glBindVertexArray(VAO); //Conectando ao buffer de geometria
-
 	// Poligono Preenchido - GL_TRIANGLES
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0); //Desconectando buffer de textura
 
 	shaderDebug->Use();
 	glBindVertexArray(VAO);

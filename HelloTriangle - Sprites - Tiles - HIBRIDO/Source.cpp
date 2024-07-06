@@ -1,9 +1,9 @@
-/* Hello Triangle - c�digo adaptado de https://learnopengl.com/#!Getting-started/Hello-Triangle 
+/* Hello Triangle - código adaptado de https://learnopengl.com/#!Getting-started/Hello-Triangle 
  *
  * Adaptado por Rossana Baptista Queiroz
- * para a disciplina de Processamento Gr�fico - Unisinos
- * Vers�o inicial: 7/4/2017
- * �ltima atualiza��o em 14/08/2023
+ * para a disciplina de Processamento Gráfico - Unisinos
+ * Versão inicial: 7/4/2017
+ * Última atualização em 06/07/2024
  *
  */
 
@@ -34,33 +34,31 @@ using namespace std;
 #include "Sprite.h"
 #include "Tile.h"
 
-#include "Timer.h"
-
 enum directions {NONE = -1, LEFT, RIGHT, UP, DOWN};
 
-// Prot�tipo da fun��o de callback de teclado
+// Protótipo da função de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // Protótipos das funções
 GLuint loadTexture(string filePath, int &imgWidth, int &imgHeight);
 bool CheckCollision(Sprite &one, Sprite &two);
 
-// Dimens�es da janela (pode ser alterado em tempo de execu��o)
+// Dimensões da janela (pode ser alterado em tempo de execução)
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 //Variáveis globais
 
 int dir = NONE;
 
-// Fun��o MAIN
+// Função MAIN
 int main()
 {
-	// Inicializa��o da GLFW
+	// Inicialização da GLFW
 	glfwInit();
 
-	//Muita aten��o aqui: alguns ambientes n�o aceitam essas configura��es
-	//Voc� deve adaptar para a vers�o do OpenGL suportada por sua placa
-	//Sugest�o: comente essas linhas de c�digo para desobrir a vers�o e
+	//Muita atenção aqui: alguns ambientes não aceitam essas configurações
+	//Você deve adaptar para a versão do OpenGL suportada por sua placa
+	//Sugestão: comente essas linhas de código para descobrir a versão e
 	//depois atualize (por exemplo: 4.5 com 4 e 5)
 	/*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -71,27 +69,27 @@ int main()
 //	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 //#endif
 
-	// Cria��o da janela GLFW
+	// Criação da janela GLFW
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ola Triangulo! -- Rossana", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
-	// Fazendo o registro da fun��o de callback para a janela GLFW
+	// Fazendo o registro da função de callback para a janela GLFW
 	glfwSetKeyCallback(window, key_callback);
 
-	// GLAD: carrega todos os ponteiros d fun��es da OpenGL
+	// GLAD: carrega todos os ponteiros de funções da OpenGL
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 
 	}
 
-	// Obtendo as informa��es de vers�o
+	// Obtendo as informações de versão
 	const GLubyte* renderer = glGetString(GL_RENDERER); /* get renderer string */
 	const GLubyte* version = glGetString(GL_VERSION); /* version as a string */
 	cout << "Renderer: " << renderer << endl;
 	cout << "OpenGL version supported " << version << endl;
 
-	// Definindo as dimens�es da viewport com as mesmas dimens�es da janela da aplica��o
+	// Definindo as dimensões da viewport com as mesmas dimensões da janela da aplicação
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
@@ -113,40 +111,23 @@ int main()
 	
 	int imgWidth, imgHeight;
 	GLuint texID = loadTexture("../Textures/characters/PNG/Knight/walk.png", imgWidth, imgHeight);
+
+	GLuint texID2 = loadTexture("./terrain.png", imgWidth, imgHeight);
 	
 	//Criação de um objeto Sprite
-	Sprite player, coin, sprite3, background, ground, sprite4;
-	player.inicializar(texID, 1, 6, glm::vec3(400.0,150.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
+	Sprite player;
+	player.inicializar(texID, 1, 6, glm::vec3(400.0,150.0,0.0), glm::vec3(imgWidth,imgHeight,1.0),0.0,glm::vec3(1.0,0.0,1.0));
 	player.setShader(&shader);
 	player.setShaderDebug(&shaderDebug);
 
-	texID = loadTexture("../Textures/items/Pirate-Stuff/Icon31.png", imgWidth, imgHeight);
-	//Criação de um objeto Sprite
-	coin.inicializar(texID, 1, 1, glm::vec3(450.0,700.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
-	coin.setShader(&shader);
-	coin.setShaderDebug(&shaderDebug);
-
-	GLuint texID2 = loadTexture("../Textures/backgrounds/fantasy-set/PNG/Battleground1/Bright/Battleground1.png", imgWidth, imgHeight);
-	background.inicializar(texID2, 1, 1, glm::vec3(400.0,300.0,0.0), glm::vec3(imgWidth/2,imgHeight/2,1.0),0.0,glm::vec3(0.0,1.0,1.0));
-	background.setShader(&shader);
-	background.setShaderDebug(&shaderDebug);
-
+	
 	Tile tile;
-	tile.inicializar(texID2, 1, 1, glm::vec3(400.0,300.0,0.0), glm::vec3(64,32,1.0),0.0,glm::vec3(0.0,1.0,1.0));
+	tile.inicializar(texID2, 9, 9, glm::vec3(400.0,300.0,0.0), glm::vec3(64.0,32.0,1.0),0.0,glm::vec3(1.0,1.0,1.0));
 	tile.setShader(&shader);
 	tile.setShaderDebug(&shaderDebug);
 
-
-	//Matriz de projeção (paralela ortográfica)
-	// Exercício 1 da Lista 2
-	//glm::mat4 projection = glm::ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
-
-
-	//Habilita o shader que sera usado (glUseProgram)
+	//Habilita o shader que será usado (glUseProgram)
 	shader.Use();
-
-
-	// Exercício 2 da Lista 2
 	glm::mat4 projection = glm::ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
 	//Enviando para o shader via variável do tipo uniform (glUniform....)
 	shader.setMat4("projection",glm::value_ptr(projection));
@@ -154,17 +135,15 @@ int main()
 	glActiveTexture(GL_TEXTURE0);
 	shader.setInt("texBuffer", 0);
 
+	//Habilita o shader de debug
 	shaderDebug.Use();
 	shaderDebug.setMat4("projection",glm::value_ptr(projection));
-
-	//Timer timer;
 	
-	
-	// Loop da aplica��o - "game loop"
+	// Loop da aplicação - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
 		//timer.start();
-		// Checa se houveram eventos de input (key pressed, mouse moved etc.) e chama as fun��es de callback correspondentes
+		// Checa se houveram eventos de input (key pressed, mouse moved etc.) e chama as funções de callback correspondentes
 		glfwPollEvents();
 
 		//Verifica flags para movimentação do personagem
@@ -181,24 +160,22 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //cor de fundo
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//background.desenhar();
-		//ground.desenhar();
+
 		//player.desenhar();
-		//coin.moveItem();
-		//coin.desenhar();
+
 		tile.desenhar();
 		
 		// Troca os buffers da tela
 		glfwSwapBuffers(window);
 	}
 	
-	// Finaliza a execu��o da GLFW, limpando os recursos alocados por ela
+	// Finaliza a execução da GLFW, limpando os recursos alocados por ela
 	glfwTerminate();
 	return 0;
 }
 
-// Funçãoo de callback de teclado - s� pode ter uma inst�ncia (deve ser est�tica se
-// estiver dentro de uma classe) - � chamada sempre que uma tecla for pressionada
+// Função de callback de teclado - só pode ter uma instância (deve ser estática se
+// estiver dentro de uma classe) - é chamada sempre que uma tecla for pressionada
 // ou solta via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
@@ -275,6 +252,7 @@ bool CheckCollision(Sprite &one, Sprite &two)
         two.getPMax().y >= one.getPMin().y;
     // collision only if on both axes
     return collisionX && collisionY;
-} 
+}
+
 
 

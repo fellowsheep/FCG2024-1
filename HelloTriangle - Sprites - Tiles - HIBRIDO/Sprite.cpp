@@ -21,7 +21,8 @@ void Sprite::inicializar(GLuint texID, int nAnimations, int nFrames, glm::vec3 p
 	cor.r = 1.0;
 	cor.g = 0.0;
 	cor.b = 1.0;
-    //Especificação da geometria da sprite (quadrado, 2 triangulos)
+    
+	//Especificação da geometria da sprite (losango, 2 triangulos)
     GLfloat vertices[] = {
 		//x   y    z    r      g      b      s    t
 		-0.5, 0.5, 0.0, cor.r, cor.g, cor.b, 0.0, offsetTex.t, //v0
@@ -31,7 +32,7 @@ void Sprite::inicializar(GLuint texID, int nAnimations, int nFrames, glm::vec3 p
          0.5,-0.5, 0.0, cor.r, cor.g, cor.b, offsetTex.s, 0.0, //v3
          0.5, 0.5, 0.0, cor.r, cor.g, cor.b, offsetTex.s, offsetTex.t  //v2
 	};
-
+	
 	GLuint VBO;
 	//Gera��o do identificador do VBO
 	glGenBuffers(1, &VBO);
@@ -99,7 +100,7 @@ void Sprite::atualizar()
     shader->setMat4("model", glm::value_ptr(model));
 
 	shaderDebug->Use();
-	shaderDebug->setVec2("offsetTex",offsetTexFrameS,offsetTexFrameT);
+	//shaderDebug->setVec2("offsetTex",offsetTexFrameS,offsetTexFrameT);
 	shaderDebug->setMat4("model", glm::value_ptr(model));
 
 }
@@ -110,20 +111,16 @@ void Sprite::desenhar()
 
 	shader->Use();
 	glBindTexture(GL_TEXTURE_2D, texID); //Conectando com a textura
-
-
     glBindVertexArray(VAO); //Conectando ao buffer de geometria
-
 	// Poligono Preenchido - GL_TRIANGLES
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 	shaderDebug->Use();
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_LINE_LOOP, 0, 6);
-
-    glBindVertexArray(0); //desconectando o buffer de geometria
+    
+	glBindVertexArray(0); //desconectando o buffer de geometria
 
 }
 
