@@ -71,6 +71,11 @@ void loadMap(string fileName);
 GLuint setupTile();
 void drawMap(Shader &shader);
 
+//Variáveis para controle de um personagem no mapa
+glm::vec2 iPos; //índice do personagem no mapa
+
+glm::vec2 posIni; //posição inicial de desenho do mapa
+
 // Fun��o MAIN
 int main()
 {
@@ -131,11 +136,11 @@ int main()
 	Shader shaderDebug("HelloTriangle.vs","HelloTriangleDebug.fs");
 	
 	int imgWidth, imgHeight;
-	GLuint texID = loadTexture("../Textures/characters/PNG/Knight/walk.png", imgWidth, imgHeight);
+	GLuint texID = loadTexture("./knight.png", imgWidth, imgHeight);
 	
 	//Criação de um objeto Sprite
 	Sprite player, coin, sprite3, background, ground, sprite4;
-	player.inicializar(texID, 1, 6, glm::vec3(400.0,150.0,0.0), glm::vec3(imgWidth*2,imgHeight*2,1.0),0.0,glm::vec3(1.0,0.0,1.0));
+	player.inicializar(texID, 1, 1, glm::vec3(400.0,150.0,0.0), glm::vec3(imgWidth*0.5,imgHeight*0.5,1.0),0.0,glm::vec3(1.0,0.0,1.0));
 	player.setShader(&shader);
 	player.setShaderDebug(&shaderDebug);
 
@@ -187,6 +192,12 @@ int main()
 	shaderDebug.Use();
 	shaderDebug.setMat4("projection",glm::value_ptr(projection));
 
+	posIni.x = tileSize.x/2;
+	posIni.y = tileSize.y/2;
+
+	iPos.x = 1;
+	iPos.y = 1;
+	
 	// Loop da aplica��o - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
@@ -201,6 +212,10 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		drawMap(shader);
+		float x = posIni.x + iPos.x * tileSize.x;
+		float y = posIni.y + iPos.y * tileSize.y;
+		player.setPosicao(glm::vec3(x,y,0.0)); //passa a posição baseada no indice da matriz
+		player.desenhar();
 
 		// Troca os buffers da tela
 		glfwSwapBuffers(window);
@@ -219,13 +234,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	if (key == GLFW_KEY_A)
+	if (key == GLFW_KEY_A && action == GLFW_PRESS)
 	{
 		dir = LEFT;
+		iPos.x -= 1;
 	}
-	if (key == GLFW_KEY_D)
+	if (key == GLFW_KEY_D && action == GLFW_PRESS)
 	{
 		dir = RIGHT;
+		iPos.x += 1;
+	}
+	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+	{
+		dir = LEFT;
+		iPos.y -= 1;
+	}
+	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{
+		dir = RIGHT;
+		iPos.y += 1;
 	}
 
 	if (action == GLFW_RELEASE)
@@ -392,10 +419,6 @@ GLuint setupTile()
 void drawMap(Shader &shader)
 {
 	shader.Use();
-
-	glm::vec2 posIni;
-	posIni.x = tileSize.x/2;
-	posIni.y = tileSize.y/2;
 
 	glBindTexture(GL_TEXTURE_2D, tilesetTexID); //Conectando com a textura
    	glBindVertexArray(VAOTile); //Conectando ao buffer de geometria
