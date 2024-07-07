@@ -26,6 +26,7 @@ class Sprite
     inline void setShader(Shader *shader) { this->shader = shader; }
     inline void setShaderDebug(Shader *shader) { this->shaderDebug = shader; }
     inline void setAngulo(float angulo) { this->angulo = angulo; }
+    void setPos(glm::vec2 pos) { this->pos.x = pos.x; this->pos.y = pos.y; }
     
     inline glm::vec3 getPMin() { return this->pmin;}
     inline glm::vec3 getPMax() { return this->pmax;}

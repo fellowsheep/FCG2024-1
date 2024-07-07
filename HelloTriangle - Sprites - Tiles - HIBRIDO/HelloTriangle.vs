@@ -17,5 +17,5 @@ void main()
 	//...pode ter mais linhas de código aqui!
 	gl_Position = projection * model * vec4(position.x, position.y, position.z, 1.0);
 	vertexColor = color;
-	texCoord = vec2(texc.s + offsetTex.s, 1 - texc.t + offsetTex.t);
+	texCoord = vec2(texc.s + offsetTex.s, texc.t + offsetTex.t);
 }

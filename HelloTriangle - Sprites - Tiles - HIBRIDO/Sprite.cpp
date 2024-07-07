@@ -22,7 +22,7 @@ void Sprite::inicializar(GLuint texID, int nAnimations, int nFrames, glm::vec3 p
 	cor.g = 0.0;
 	cor.b = 1.0;
     
-	//Especificação da geometria da sprite (losango, 2 triangulos)
+	//Especificação da geometria da sprite (losango, 2 triângulos)
     GLfloat vertices[] = {
 		//x   y    z    r      g      b      s    t
 		-0.5, 0.5, 0.0, cor.r, cor.g, cor.b, 0.0, offsetTex.t, //v0
@@ -34,23 +34,23 @@ void Sprite::inicializar(GLuint texID, int nAnimations, int nFrames, glm::vec3 p
 	};
 	
 	GLuint VBO;
-	//Gera��o do identificador do VBO
+	//Geração do identificador do VBO
 	glGenBuffers(1, &VBO);
-	//Faz a conex�o (vincula) do buffer como um buffer de array
+	//Faz a conexão (vincula) do buffer como um buffer de array
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//Envia os dados do array de floats para o buffer da OpenGl
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	//Gera��o do identificador do VAO (Vertex Array Object)
+	//Geração do identificador do VAO (Vertex Array Object)
 	glGenVertexArrays(1, &VAO);
-	// Vincula (bind) o VAO primeiro, e em seguida  conecta e seta o(s) buffer(s) de v�rtices
+	// Vincula (bind) o VAO primeiro, e em seguida conecta e seta o(s) buffer(s) de vértices
 	// e os ponteiros para os atributos 
 	glBindVertexArray(VAO);
-	//Para cada atributo do vertice, criamos um "AttribPointer" (ponteiro para o atributo), indicando: 
-	// Localiza��o no shader * (a localiza��o dos atributos devem ser correspondentes no layout especificado no vertex shader)
+	//Para cada atributo do vértice, criamos um "AttribPointer" (ponteiro para o atributo), indicando: 
+	// Localização no shader * (a localização dos atributos devem ser correspondentes no layout especificado no vertex shader)
 	// Numero de valores que o atributo tem (por ex, 3 coordenadas xyz) 
 	// Tipo do dado
-	// Se est� normalizado (entre zero e um)
+	// Se está normalizado (entre zero e um)
 	// Tamanho em bytes 
 	// Deslocamento a partir do byte zero 
 
@@ -66,11 +66,11 @@ void Sprite::inicializar(GLuint texID, int nAnimations, int nFrames, glm::vec3 p
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6* sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
-	// Observe que isso � permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de v�rtice 
-	// atualmente vinculado - para que depois possamos desvincular com seguran�a
+	// Observe que isso é permitido, a chamada para glVertexAttribPointer registrou o VBO como o objeto de buffer de vértice 
+	// atualmente vinculado - para que depois possamos desvincular com segurança
 	glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
-	// Desvincula o VAO (� uma boa pr�tica desvincular qualquer buffer ou array para evitar bugs medonhos)
+	// Desvincula o VAO (é uma boa prática desvincular qualquer buffer ou array para evitar bugs medonhos)
 	glBindVertexArray(0);
 
 	vel = 2.0;
@@ -112,7 +112,7 @@ void Sprite::desenhar()
 	shader->Use();
 	glBindTexture(GL_TEXTURE_2D, texID); //Conectando com a textura
     glBindVertexArray(VAO); //Conectando ao buffer de geometria
-	// Poligono Preenchido - GL_TRIANGLES
+	// Polígono Preenchido - GL_TRIANGLES
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
